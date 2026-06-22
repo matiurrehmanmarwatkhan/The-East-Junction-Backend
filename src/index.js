@@ -27,6 +27,17 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // API Routes mounting
 app.use("/api", allRoutes);
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ status: "OK", message: "Luxury Restaurant Backend Operational" });
+});
+
+// Favicon handler to avoid browser 404 noise
+app.get("/favicon.ico", (req, res) => {
+  res.status(204).end();
+});
+
 // Simple Health Check
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Luxury Restaurant Backend Operational" });

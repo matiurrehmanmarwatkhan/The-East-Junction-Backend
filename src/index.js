@@ -7,17 +7,14 @@ import allRoutes from "./routes/index.js";
 config();
 
 const app = express();
-let dbConnected = false;
+let dbConnectPromise = null;
 
-// Connect to MongoDB once
-connectDB()
-  .then(() => {
-    dbConnected = true;
-    console.log("MongoDB connected successfully");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-  });
+const ensureDBConnected = async () => {
+  if (!dbConnectPromise) {
+    dbConnectPromise = connectDB();
+  }
+  return dbConnectPromise;
+};
 
 // Middlewares
 app.use(
@@ -30,15 +27,18 @@ app.use(
 app.use(express.json({ limit: "50mb" })); // Increase limit for base64 image strings
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Middleware to check database connection
-app.use((req, res, next) => {
-  if (!dbConnected) {
-    return res.status(503).json({
+// Middleware to ensure DB connection before handling API requests
+app.use(async (req, res, next) => {
+  try {
+    await ensureDBConnected();
+    next();
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    res.status(503).json({
       success: false,
-      message: "Database is still connecting. Please try again.",
+      message: "Database connection failed. Please try again later.",
     });
   }
-  next();
 });
 
 // API Routes mounting

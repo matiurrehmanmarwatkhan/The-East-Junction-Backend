@@ -23,6 +23,22 @@ function getAI() {
   return aiClient;
 }
 
+const getSimulationResponse = (message) => {
+  const lower = message.toLowerCase();
+  let text = "Welcome to The East Junction Peshawar! I am EastBot, your server-side assistant. It seems there is no API key configured in our Secrets yet, but I am happy to help! We are located at Spogmai Plaza, Near Avon Super Store, University Road, Peshawar and open 11:00 AM to 12:00 AM. Call us at 0915840011.";
+
+  if (lower.includes("reserve") || lower.includes("table") || lower.includes("booking") || lower.includes("book")) {
+    text = "Absolutely! I can assist you with your table reservation. Please share your Name, Phone Number, Date, Time, and Guest Count, and we will get your table ready at The East Junction Peshawar!";
+  } else if (lower.includes("location") || lower.includes("kahan") || lower.includes("address") || lower.includes("where")) {
+    text = "The East Junction Peshawar is located at Spogmai Plaza, Near Avon Super Store, University Road, Peshawar. Drive over or find us on Google Maps!";
+  } else if (lower.includes("menu") || lower.includes("khana") || lower.includes("dishes") || lower.includes("eat")) {
+    text = "We have wonderful dishes! Some of our most popular are the Turkish Platter (Rs. 1850), Signature Gourmet Burger (Rs. 850), Tarragon Grilled Steak (Rs. 1650), and Chicken Mushroom Pasta (Rs. 1150). Try our refreshing Mint Lemonade too!";
+  } else if (lower.includes("birthday") || lower.includes("event") || lower.includes("salgira")) {
+    text = "Yes! We specialize in premium Birthday event setups. Please share the Event Type, Date, Guest Count, and Decoration Requirements so we can organize it perfectly!";
+  }
+  return text;
+};
+
 export const chatWithBot = async (req, res) => {
   const { message, history } = req.body;
 
@@ -31,21 +47,9 @@ export const chatWithBot = async (req, res) => {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  if (!apiKey || !apiKey.startsWith("AIzaSy")) {
     // Offline simulation mode
-    const lower = message.toLowerCase();
-    let text = "Welcome to The East Junction Peshawar! I am EastBot, your server-side assistant. It seems there is no API key configured in our Secrets yet, but I am happy to help! We are located at Spogmai Plaza, Near Avon Super Store, University Road, Peshawar and open 11:00 AM to 12:00 AM. Call us at 0915840011.";
-
-    if (lower.includes("reserve") || lower.includes("table") || lower.includes("booking") || lower.includes("book")) {
-      text = "Absolutely! I can assist you with your table reservation. Please share your Name, Phone Number, Date, Time, and Guest Count, and we will get your table ready at The East Junction Peshawar!";
-    } else if (lower.includes("location") || lower.includes("kahan") || lower.includes("address") || lower.includes("where")) {
-      text = "The East Junction Peshawar is located at Spogmai Plaza, Near Avon Super Store, University Road, Peshawar. Drive over or find us on Google Maps!";
-    } else if (lower.includes("menu") || lower.includes("khana") || lower.includes("dishes") || lower.includes("eat")) {
-      text = "We have wonderful dishes! Some of our most popular are the Turkish Platter (Rs. 1850), Signature Gourmet Burger (Rs. 850), Tarragon Grilled Steak (Rs. 1650), and Chicken Mushroom Pasta (Rs. 1150). Try our refreshing Mint Lemonade too!";
-    } else if (lower.includes("birthday") || lower.includes("event") || lower.includes("salgira")) {
-      text = "Yes! We specialize in premium Birthday event setups. Please share the Event Type, Date, Guest Count, and Decoration Requirements so we can organize it perfectly!";
-    }
-    return res.json({ text });
+    return res.json({ text: getSimulationResponse(message) });
   }
 
   try {
@@ -257,7 +261,7 @@ Ask and collect Event Type, Date, Guest Count, Decoration Requirements, and Cont
   } catch (error) {
     console.error("CHAT ERROR:", error);
     return res.json({
-      text: "The East Junction service is slightly busy. Aap direct reservations tab use kr sakte hain ya call kr sakte hain!",
+      text: getSimulationResponse(message),
     });
   }
 };

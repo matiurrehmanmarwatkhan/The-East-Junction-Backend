@@ -13,16 +13,16 @@ import uploadRoutes from "./uploadRoutes.js";
 
 const router = Router();
 
-router.use("/api", adminRoutes);
-router.use("/api/categories", categoryRoutes);
-router.use("/api/menu", menuRoutes);
-router.use("/api/reviews", reviewRoutes);
-router.use("/api/gallery", galleryRoutes);
-router.use("/api/messages", messageRoutes);
-router.use("/api/settings", restaurantSettingRoutes);
-router.use("/api/reservations", reservationRoutes);
-router.use("/api/events", birthdayEventRoutes);
-router.use("/api/chat", chatRoutes);
-router.use("/api/upload", uploadRoutes);
+router.use("/", adminRoutes);
+router.use("/categories", categoryRoutes);
+router.use("/menu", menuRoutes);
+router.use("/reviews", reviewRoutes);
+router.use("/gallery", galleryRoutes);
+router.use("/messages", messageRoutes);
+router.use("/settings", restaurantSettingRoutes);
+router.use("/reservations", reservationRoutes);
+router.use("/events", birthdayEventRoutes);
+router.use("/chat", chatRoutes);
+router.use("/upload", uploadRoutes);
 
 export default router;

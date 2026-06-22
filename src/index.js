@@ -47,3 +47,5 @@ app.get("/health", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Luxury Restaurant Server running on http://localhost:${PORT}`);
 });
+
+export default app;

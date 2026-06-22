@@ -10,10 +10,31 @@ const app = express();
 let dbConnectPromise = null;
 
 const ensureDBConnected = async () => {
+  if (!process.env.MONGODB_URI) {
+    throw new Error(
+      "MONGODB_URI is not defined. Set it in .env or Vercel environment variables.",
+    );
+  }
+
   if (!dbConnectPromise) {
     dbConnectPromise = connectDB();
   }
   return dbConnectPromise;
+};
+
+// Ensure DB connects during local startup so failures are visible immediately.
+const startLocalServer = async () => {
+  try {
+    await ensureDBConnected();
+    app.listen(PORT, () => {
+      console.log(
+        `Luxury Restaurant Server running on http://localhost:${PORT}`,
+      );
+    });
+  } catch (err) {
+    console.error("Failed to start backend:", err.message);
+    process.exit(1);
+  }
 };
 
 // Middlewares
@@ -62,9 +83,7 @@ app.get("/health", (req, res) => {
 // Start server locally (for development)
 const PORT = process.env.PORT || 3001;
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => {
-    console.log(`Luxury Restaurant Server running on http://localhost:${PORT}`);
-  });
+  startLocalServer();
 }
 
 export default app;

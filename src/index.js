@@ -8,9 +8,6 @@ import allRoutes from "./routes/index.js";
 
 config();
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -43,9 +40,21 @@ app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Luxury Restaurant Backend Operational" });
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Luxury Restaurant Server running on http://localhost:${PORT}`);
-});
+// Connect to MongoDB and Start Server
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(
+        `Luxury Restaurant Server running on http://localhost:${PORT}`,
+      );
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 export default app;
